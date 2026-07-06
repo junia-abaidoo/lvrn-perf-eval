@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LVRN Performance Evaluation 2026</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .two-column { grid-template-columns: 1fr; }
+        }
+
+        .competency-block {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+
+        .competency-title {
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .competency-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .rating-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .rating-item-label {
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .rating-options {
+            display: flex;
+            gap: 6px;
+        }
+
+        .rating-btn {
+            width: 35px;
+            height: 35px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .rating-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .rating-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .feedback-box {
+            margin-top: 12px;
+        }
+
+        .feedback-box label {
+            display: block;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        .feedback-box textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9em;
+            min-height: 70px;
+            resize: vertical;
+        }
+
+        .feedback-box textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .rating-scale {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .rating-scale-item {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .rating-scale-item strong {
+            color: #1a1a2e;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            font-weight: 400;
+            cursor: pointer;
+            font-size: 0.95em;
+            margin: 0;
+        }
+
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 0;
+            }
+            .button-group {
+                display: none;
+            }
+            .header {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>LVRN Performance Evaluation 2026</h1>
+            <p>Semi-Annual Assessment</p>
+        </div>
+
+        <div class="content">
+            <div class="success-message" id="successMessage">
+                ✓ Form saved locally! Download your PDF below.
+            </div>
+
+            <form id="evaluationForm">
+                <!-- EVALUATOR INFO -->
+                <div class="section">
+                    <h2 class="section-title">Evaluator Information</h2>
+                    
+                    <div class="form-group">
+                        <label>Evaluation Type *</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="evaluatorType" value="self" required>
+                                Self-Evaluation
+                            </label>
+                            <label>
+                                <input type="radio" name="evaluatorType" value="manager" required>
+                                Manager Evaluation
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Your Name / Title *</label>
+                            <input type="text" id="evaluatorName" placeholder="Your name and title" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Date *</label>
+                            <input type="text" id="evaluationDate" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Employee Name (if manager evaluation)</label>
+                        <input type="text" id="employeeName" placeholder="Employee name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Employee Title *</label>
+                        <input type="text" id="employeeTitle" placeholder="Position/role" required>
+                    </div>
+                </div>
+
+                <!-- RATING SCALE -->
+                <div class="section">
+                    <h2 class="section-title">Rating Scale</h2>
+                    <div class="rating-scale">
+                        <div class="rating-scale-item"><strong>5 - Exemplary:</strong> Sets the standard for excellence</div>
+                        <div class="rating-scale-item"><strong>4 - Exceptional:</strong> Consistently exceeds expectations</div>
+                        <div class="rating-scale-item"><strong>3 - Meets Expectations:</strong> Solid performer</div>
+                        <div class="rating-scale-item"><strong>2 - Needs Improvement:</strong> Requires improvements</div>
+                        <div class="rating-scale-item"><strong>1 - Unsatisfactory:</strong> Does not meet requirements</div>
+                        <div class="rating-scale-item"><strong>0 - Not Applicable</strong></div>
+                    </div>
+                </div>
+
+                <!-- 1. EXECUTION & TIME MANAGEMENT -->
+                <div class="section">
+                    <h2 class="section-title">1. Execution & Time Management</h2>
+                    <div class="competency-block">
+                        <div class="competency-description">
+                            Ability to manage time and resources to effectively deliver on projects and responsibilities
+                        </div>
+                        
+                        <div class="rating-item">
+                            <div class="rating-item-label">Prioritizes workplace goals</div>
+                            <div class="rating-options" data-field="exec_1">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Demonstrates exceptional multitasking skills</div>
+                            <div class="rating-options" data-field="exec_2">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Possesses effective time management abilities</div>
+                            <div class="rating-options" data-field="exec_3">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Problem solving and resource management</div>
+                            <div class="rating-options" data-field="exec_4">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="feedback-box">
+                            <label>Supervisor Feedback – Execution & Time Management</label>
+                            <textarea id="exec_feedback" placeholder="Provide feedback..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. COMMUNICATION -->
+                <div class="section">
+                    <h2 class="section-title">2. Communication</h2>
+                    <div class="competency-block">
+                        <div class="competency-description">
+                            Ability to express ideas clearly and professionally across internal and external partners
+                        </div>
+                        
+                        <div class="rating-item">
+                            <div class="rating-item-label">Demonstrates respect and trust</div>
+                            <div class="rating-options" data-field="comm_1">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Giving & receiving feedback</div>
+                            <div class="rating-options" data-field="comm_2">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Conflict resolution</div>
+                            <div class="rating-options" data-field="comm_3">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Effective Communication</div>
+                            <div class="rating-options" data-field="comm_4">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="feedback-box">
+                            <label>Supervisor Feedback – Communication</label>
+                            <textarea id="comm_feedback" placeholder="Provide feedback..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. QUALITY & ACCOUNTABILITY -->
+                <div class="section">
+                    <h2 class="section-title">3. Quality & Accountability</h2>
+                    <div class="competency-block">
+                        <div class="competency-description">
+                            Meets organizational objectives and takes responsibility for performance outcomes
+                        </div>
+                        
+                        <div class="rating-item">
+                            <div class="rating-item-label">Accountable for workload</div>
+                            <div class="rating-options" data-field="qual_1">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Meets deadlines</div>
+                            <div class="rating-options" data-field="qual_2">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Attention to detail</div>
+                            <div class="rating-options" data-field="qual_3">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Autonomy</div>
+                            <div class="rating-options" data-field="qual_4">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="feedback-box">
+                            <label>Supervisor Feedback – Quality & Accountability</label>
+                            <textarea id="qual_feedback" placeholder="Provide feedback..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. CHANGES & INNOVATION -->
+                <div class="section">
+                    <h2 class="section-title">4. Changes & Innovation</h2>
+                    <div class="competency-block">
+                        <div class="competency-description">
+                            Open to new ideas and experiences. Offers creative suggestions and collaborates to solve problems
+                        </div>
+                        
+                        <div class="rating-item">
+                            <div class="rating-item-label">Creative Thinking</div>
+                            <div class="rating-options" data-field="innov_1">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Navigates Change and Ambiguity</div>
+                            <div class="rating-options" data-field="innov_2">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="feedback-box">
+                            <label>Supervisor Feedback – Changes & Innovation</label>
+                            <textarea id="innov_feedback" placeholder="Provide feedback..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. TEAMWORK -->
+                <div class="section">
+                    <h2 class="section-title">5. Teamwork</h2>
+                    <div class="competency-block">
+                        <div class="competency-description">
+                            Skills and behaviors that enable effective collaboration to achieve shared goals
+                        </div>
+                        
+                        <div class="rating-item">
+                            <div class="rating-item-label">Collaboration</div>
+                            <div class="rating-options" data-field="team_1">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Cooperation</div>
+                            <div class="rating-options" data-field="team_2">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="feedback-box">
+                            <label>Supervisor Feedback – Teamwork</label>
+                            <textarea id="team_feedback" placeholder="Provide feedback..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. ATTENDANCE & PUNCTUALITY -->
+                <div class="section">
+                    <h2 class="section-title">6. Attendance & Punctuality</h2>
+                    <div class="competency-block">
+                        <div class="competency-description">
+                            Consistently shows up on time and demonstrates reliability through regular attendance
+                        </div>
+                        
+                        <div class="rating-item">
+                            <div class="rating-item-label">Regular attendance</div>
+                            <div class="rating-options" data-field="attend_1">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Timely communication about absences</div>
+                            <div class="rating-options" data-field="attend_2">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="feedback-box">
+                            <label>Supervisor Feedback – Attendance & Punctuality</label>
+                            <textarea id="attend_feedback" placeholder="Provide feedback..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. ETHICS & INTEGRITY -->
+                <div class="section">
+                    <h2 class="section-title">7. Ethics & Integrity</h2>
+                    <div class="competency-block">
+                        <div class="competency-description">
+                            Consistently acts in a morally upright manner, adhering to ethical principles and organizational standards
+                        </div>
+                        
+                        <div class="rating-item">
+                            <div class="rating-item-label">Adheres to organizational standards</div>
+                            <div class="rating-options" data-field="ethics_1">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class="rating-btn" data-value="1">1</button>
+                                <button type="button" class="rating-btn" data-value="2">2</button>
+                                <button type="button" class="rating-btn" data-value="3">3</button>
+                                <button type="button" class="rating-btn" data-value="4">4</button>
+                                <button type="button" class="rating-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-item">
+                            <div class="rating-item-label">Represents organization positively</div>
+                            <div class="rating-options" data-field="ethics_2">
+                                <button type="button" class="rating-btn" data-value="0">0</button>
+                                <button type="button" class= "5">5</button>
+                            </div>
+                        </div>
+
+                        <div class="feedback-box">
+                            <label>Supervisor Feedback – Ethics & Integrity</label>
+                            <textarea id="ethics_feedback" placeholder="Provide feedback..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear</button>
+                    <button type="button" class="btn btn-primary" onclick="saveToPDF()">Download PDF</button>
+                    <button type="button" class="btn btn-primary" onclick="exportToCSV()">Export as CSV</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Set date
+        document.getElementById('evaluationDate').value = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Rating button functionality
+        document.querySelectorAll('.rating-options').forEach(group => {
+            group.querySelectorAll('.rating-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    group.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    saveToLocalStorage();
+                });
+            });
+        });
+
+        // Save to localStorage
+        function saveToLocalStorage() {
+            const formData = {
+                evaluatorType: document.querySelector('input[name="evaluatorType"]:checked')?.value || '',
+                evaluatorName: document.getElementById('evaluatorName').value,
+                employeeName: document.getElementById('employeeName').value,
+                employeeTitle: document.getElementById('employeeTitle').value,
+                ratings: {},
+                feedback: {}
+            };
+
+            // Collect ratings
+            document.querySelectorAll('.rating-options').forEach(group => {
+                const selected = group.querySelector('.rating-btn.selected');
+                if (selected) {
+                    formData.ratings[group.dataset.field] = selected.dataset.value;
+                }
+            });
+
+            // Collect feedback
+            document.querySelectorAll('textarea').forEach(ta => {
+                formData.feedback[ta.id] = ta.value;
+            });
+
+            localStorage.setItem('lvrn_eval_data', JSON.stringify(formData));
+        }
+
+        // Load from localStorage
+        function loadFromLocalStorage() {
+            const data = JSON.parse(localStorage.getItem('lvrn_eval_data') || '{}');
+            
+            if (data.evaluatorType) {
+                document.querySelector(`input[value="${data.evaluatorType}"]`).checked = true;
+            }
+            if (data.evaluatorName) document.getElementById('evaluatorName').value = data.evaluatorName;
+            if (data.employeeName) document.getElementById('employeeName').value = data.employeeName;
+            if (data.employeeTitle) document.getElementById('employeeTitle').value = data.employeeTitle;
+
+            // Load ratings
+            Object.entries(data.ratings || {}).forEach(([field, value]) => {
+                const group = document.querySelector(`.rating-options[data-field="${field}"]`);
+                if (group) {
+                    const btn = group.querySelector(`[data-value="${value}"]`);
+                    if (btn) {
+                        group.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                    }
+                }
+            });
+
+            // Load feedback
+            Object.entries(data.feedback || {}).forEach(([id, value]) => {
+                const ta = document.getElementById(id);
+                if (ta) ta.value = value;
+            });
+        }
+
+        // Event listeners for auto-save
+        document.getElementById('evaluationForm').querySelectorAll('input, textarea').forEach(el => {
+            el.addEventListener('change', saveToLocalStorage);
+        });
+
+        document.querySelectorAll('input[name="evaluatorType"]').forEach(radio => {
+            radio.addEventListener('change', saveToLocalStorage);
+        });
+
+        // Reset form
+        function resetForm() {
+            if (confirm('Clear all data? This cannot be undone.')) {
+                document.getElementById('evaluationForm').reset();
+                localStorage.removeItem('lvrn_eval_data');
+                location.reload();
+            }
+        }
+
+        // Calculate dimension averages
+        function getScores() {
+            const scores = {
+                exec: [],
+                comm: [],
+                qual: [],
+                innov: [],
+                team: [],
+                attend: [],
+                ethics: []
+            };
+
+            document.querySelectorAll('.rating-options').forEach(group => {
+                const field = group.dataset.field;
+                const selected = group.querySelector('.rating-btn.selected');
+                if (selected) {
+                    const value = parseInt(selected.dataset.value);
+                    const prefix = field.split('_')[0];
+                    if (scores[prefix]) scores[prefix].push(value);
+                }
+            });
+
+            return scores;
+        }
+
+        function calculateAverages() {
+            const scores = getScores();
+            const averages = {};
+            Object.entries(scores).forEach(([key, values]) => {
+                if (values.length > 0) {
+                    averages[key] = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
+                }
+            });
+            return averages;
+        }
+
+        // Save to PDF
+        function saveToPDF() {
+            const evaluatorType = document.querySelector('input[name="evaluatorType"]:checked')?.value;
+            const employeeName = document.getElementById('employeeName').value || document.getElementById('evaluatorName').value;
+
+            if (!evaluatorType || !employeeName || !document.getElementById('employeeTitle').value) {
+                alert('Please fill in: Evaluation Type, Employee Name, and Employee Title');
+                return;
+            }
+
+            saveToLocalStorage();
+
+            const element = document.querySelector('.container');
+            const opt = {
+                margin: 10,
+                filename: `LVRN_Eval_${employeeName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+            document.getElementById('successMessage').style.display = 'block';
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            const evaluatorType = document.querySelector('input[name="evaluatorType"]:checked')?.value;
+            const employeeName = document.getElementById('employeeName').value || document.getElementById('evaluatorName').value;
+
+            if (!evaluatorType || !employeeName || !document.getElementById('employeeTitle').value) {
+                alert('Please fill in required fields');
+                return;
+            }
+
+            saveToLocalStorage();
+            const averages = calculateAverages();
+
+            let csv = 'LVRN Performance Evaluation Export\n';
+            csv += `Evaluation Date,${document.getElementById('evaluationDate').value}\n`;
+            csv += `Evaluation Type,${evaluatorType}\n`;
+            csv += `Evaluator,${document.getElementById('evaluatorName').value}\n`;
+            csv += `Employee,${employeeName}\n`;
+            csv += `Position,${document.getElementById('employeeTitle').value}\n\n`;
+            csv += 'Dimension Averages\n';
+            csv += 'Execution & Time Management,' + (averages.exec || 'N/A') + '\n';
+            csv += 'Communication,' + (averages.comm || 'N/A') + '\n';
+            csv += 'Quality & Accountability,' + (averages.qual || 'N/A') + '\n';
+            csv += 'Changes & Innovation,' + (averages.innov || 'N/A') + '\n';
+            csv += 'Teamwork,' + (averages.team || 'N/A') + '\n';
+            csv += 'Attendance & Punctuality,' + (averages.attend || 'N/A') + '\n';
+            csv += 'Ethics & Integrity,' + (averages.ethics || 'N/A') + '\n';
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `LVRN_Eval_${employeeName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        // Load on page load
+        loadFromLocalStorage();
+    </script>
+</body>
+</html>
